@@ -1,6 +1,6 @@
 package com.hawkab.repository;
 
-import com.hawkab.entity.BlackList;
+import com.hawkab.entity.BlackListEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface BlackListRepository extends JpaRepository<BlackList, Long> {
+public interface BlackListRepository extends JpaRepository<BlackListEntity, Long> {
+
+    BlackListEntity findByPersonnelId(String personnelId);
     Boolean existsByPersonnelId(String personnelId);
 }

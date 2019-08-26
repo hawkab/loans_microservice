@@ -12,8 +12,8 @@ import java.util.Objects;
 
 public class AppUtils {
 
-    public static boolean nonNull(Object... args) {
-        return Arrays.stream(args).allMatch(Objects::nonNull);
+    public static boolean isNullAnything(Object... args) {
+        return Arrays.stream(args).anyMatch(Objects::isNull);
     }
 
     public static boolean isNotNullOrWhitespace(String... args) {
@@ -22,5 +22,9 @@ public class AppUtils {
 
     public static boolean isNullOrWhitespace(String... args) {
         return Arrays.stream(args).allMatch(StringUtils::isBlank);
+    }
+
+    public static boolean isNullOrWhitespaceAnything(String... args) {
+        return Arrays.stream(args).anyMatch(StringUtils::isBlank);
     }
 }

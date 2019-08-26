@@ -32,6 +32,9 @@ public class Loan {
     @Column(name = "product_state")
     private ProductStateEnum productState;
 
+    @Column(name = "decision_description")
+    private String decisionDescription;
+
     private BigDecimal amount;
     private Integer duration;
     private String firstName;
@@ -101,5 +104,13 @@ public class Loan {
 
     public LocalDateTime getCreationDate() {
         return creationDate;
+    }
+
+    public String getDecisionDescription() {
+        return decisionDescription;
+    }
+
+    public void setDecisionDescription(String decisionDescription) {
+        this.decisionDescription = decisionDescription;
     }
 }

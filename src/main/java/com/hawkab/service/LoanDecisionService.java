@@ -3,6 +3,7 @@ package com.hawkab.service;
 import com.hawkab.entity.Loan;
 import com.hawkab.entity.enums.ProductStateEnum;
 import com.hawkab.repository.BlackListRepository;
+import com.hawkab.utils.AppUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import javax.xml.bind.ValidationException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -34,7 +34,7 @@ public class LoanDecisionService {
         this.settingService = settingService;
     }
 
-    public ProductStateEnum getLoanDecision(Loan loan) {
+    public Loan getLoanDecision(Loan loan) {
         try {
             blackListCheck(loan);
             limitClaimByCountryPerMinuteCheck(loan);
@@ -43,23 +43,23 @@ public class LoanDecisionService {
             LOGGER.warn(ex);
             ProductStateEnum decision = ProductStateEnum.REJECTED;
             loan.setProductState(decision);
-            loanService.save(loan);
-            return decision;
+            loan.setDecisionDescription(ex.getMessage());
+            return loanService.save(loan);
         }
 
         ProductStateEnum decision = ProductStateEnum.CONFIRMED;
         loan.setProductState(decision);
-        loanService.save(loan);
-        return decision;
+        loan.setDecisionDescription("Заявка успешно прошла проверку автоматическим средством контроля и подтерждена");
+        return loanService.save(loan);
     }
 
     private void limitAmountClaimByUserCheck(Loan loan) throws ValidationException {
         BigDecimal limitAmount = settingService.getLimitAmount();
         BigDecimal debt = loanService.sumAmountByPersonnelIdAndStatuses
-                (StringUtils.isBlank(loan.getPersonnelId()) ? StringUtils.EMPTY : loan.getPersonnelId(),
-                Arrays.asList(ProductStateEnum.AWAITING_PAYMENT, ProductStateEnum.CONFIRMED));
-        if (Objects.nonNull(debt) && debt.compareTo(limitAmount) > 0) {
-            throw new ValidationException(String.format("Превышен лимит по сумме непогашенных кредитов %s у " +
+                (StringUtils.isBlank(loan.getPersonnelId()) ? StringUtils.EMPTY : loan.getPersonnelId());
+        debt = debt.add(loan.getAmount());
+        if (debt.compareTo(limitAmount) > 0) {
+            throw new ValidationException(String.format("Превышен лимит по сумме непогашенных кредитов '%s' у " +
                             "пользователя (по личному идентификатору)",
                     limitAmount));
         }
@@ -70,11 +70,15 @@ public class LoanDecisionService {
         long limitMinutes = settingService.getLimitMinutes();
         Long factCountClaims = loanService.countClaimsByCountryAndCreationDate(
                 StringUtils.isBlank(loan.getCountry()) ? StringUtils.EMPTY : loan.getCountry(),
-                LocalDateTime.now().minusMinutes(limitMinutes));
-        if (factCountClaims > limitCountClaims) {
+                LocalDateTime.now().minusSeconds(getSeconds(limitMinutes)));
+        if (factCountClaims >= limitCountClaims) {
             throw new ValidationException(String.format("Превышен лимит '%s' заявок в '%s' минут от страны '%s'.",
                     limitCountClaims, limitMinutes, loan.getCountry()));
         }
+    }
+
+    private long getSeconds(long limitMinutes) {
+        return limitMinutes * 60;
     }
 
     private void blackListCheck(Loan loan) throws ValidationException {

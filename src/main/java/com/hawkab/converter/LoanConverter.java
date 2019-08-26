@@ -19,6 +19,7 @@ public class LoanConverter {
     public static LoanClaim convert(Loan entity) {
         LoanClaim claim = new LoanClaim();
         BeanUtils.copyProperties(entity, claim);
+        claim.setProductState(entity.getProductState().name());
         return claim;
     }
 }

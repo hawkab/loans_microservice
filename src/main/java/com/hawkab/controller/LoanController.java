@@ -9,6 +9,7 @@ import com.hawkab.rest.LoanClaimResult;
 import com.hawkab.rest.LoanFilterCriteria;
 import com.hawkab.service.LoanDecisionService;
 import com.hawkab.service.LoanService;
+import com.hawkab.utils.LoanValidator;
 import com.hawkab.utils.AppUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
+import javax.xml.bind.ValidationException;
 import java.util.Objects;
 
 /**
@@ -48,15 +50,17 @@ public class LoanController {
 
     @RequestMapping(consumes = "application/json", produces = "application/json", method = RequestMethod.POST)
     public ResponseEntity<LoanClaimResult> addLoan(@RequestBody LoanClaim loanClaim) {
-        if (AppUtils.isNotNullOrWhitespace(loanClaim.getCountry(), loanClaim.getPersonnelId())
-                && AppUtils.nonNull(loanClaim.getAmount(), loanClaim.getDuration())) {
-            Loan loan = loanService.addLoan(LoanConverter.convert(loanClaim));
-            ProductStateEnum loanDecision = loanDecisionService.getLoanDecision(loan);
-            return ResponseEntity.ok().body(new LoanClaimResult(loan.getUuid(), loanDecision.name()));
+        Loan converted = LoanConverter.convert(loanClaim);
+        try {
+            LoanValidator.validate(converted);
+        } catch (ValidationException ex) {
+            LOGGER.warn(ex);
+            return ResponseEntity.badRequest().body(new LoanClaimResult(null, ex.getMessage()));
         }
-        return ResponseEntity.badRequest().body(
-                new LoanClaimResult(null, "Не заполнено одно из обязательных полей: amount, duration, " +
-                "country или personnelId"));
+
+        Loan loan = loanDecisionService.getLoanDecision(converted);
+            return ResponseEntity.ok().body(new LoanClaimResult(loan.getUuid(),
+                    String.format("%s - %s", loan.getProductState().name(), loan.getDecisionDescription())));
     }
 
     @RequestMapping(produces = "text/plain;charset=UTF-8", value = "/repay", method = RequestMethod.POST)
@@ -67,7 +71,7 @@ public class LoanController {
                 loan = loanService.repayLoan(loanClaimInfo.getLoanId(), loanClaimInfo.getPersonnelId());
             } catch (EntityNotFoundException ex) {
                 LOGGER.warn(ex);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Кредит с такими данными не найден");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Подтверждённый кредит с такими данными не найден");
             }
             if (Objects.nonNull(loan) && ProductStateEnum.PAYED.equals(loan.getProductState())) {
                 return ResponseEntity.ok("Кредит успешно погашен");
@@ -80,18 +84,26 @@ public class LoanController {
         return ResponseEntity.badRequest().body("Не заполнено одно из обязательных полей: loanId или personnelId");
     }
 
-
-    @RequestMapping(produces = "text/plain;charset=UTF-8", value = "/readd", method = RequestMethod.POST)
-    public ResponseEntity<String> reAddLoan(@RequestBody LoanClaimInfo loanClaimInfo) {
+    @RequestMapping(produces = "application/json", consumes = "application/json", value = "/readd", method = RequestMethod.POST)
+    public ResponseEntity<LoanClaimResult> reAddLoan(@RequestBody LoanClaimInfo loanClaimInfo) {
         if (AppUtils.isNotNullOrWhitespace(loanClaimInfo.getLoanId(), loanClaimInfo.getPersonnelId())) {
-            return ResponseEntity.badRequest().body("Не заполнено одно из обязательных полей: loanId или personnelId");
+            Loan loan = loanService.getLoanByUuidAndPersonnelId(loanClaimInfo.getLoanId(), loanClaimInfo.getPersonnelId());
+            if (Objects.isNull(loan)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LoanClaimResult(null,
+                        "По заданным параметрам отказанный кредит не найден"));
+            }
+            try {
+                LoanValidator.validate(loan);
+            } catch (ValidationException ex) {
+                LOGGER.warn(ex);
+                return ResponseEntity.badRequest().body(new LoanClaimResult(null, ex.getMessage()));
+            }
+            loanDecisionService.getLoanDecision(loan);
+            return ResponseEntity.ok().body(new LoanClaimResult(loan.getUuid(),
+                    String.format("%s - %s", loan.getProductState().name(), loan.getDecisionDescription())));
         }
-        Loan loan = loanService.getLoanByUuidAndPersonnelId(loanClaimInfo.getLoanId(), loanClaimInfo.getPersonnelId());
-        ProductStateEnum loanDecision = loanDecisionService.getLoanDecision(loan);
-        if (ProductStateEnum.REJECTED.equals(loanDecision)) {
-            return ResponseEntity.ok().body(loanDecision.name());
-        }
-        return ResponseEntity.ok().body(loan.getUuid());
+        return ResponseEntity.badRequest().body(new LoanClaimResult(null,
+                "Не заполнено одно из обязательных полей: loanId или personnelId"));
     }
 
     @RequestMapping(produces = "application/json;charset=UTF-8", value = "/{uuid}", method = RequestMethod.GET)
@@ -106,8 +118,9 @@ public class LoanController {
         return ResponseEntity.ok().body(LoanConverter.convert(loan));
     }
 
-    @RequestMapping(consumes = "application/json", produces = "application/json", value = "/filter", method = RequestMethod.POST)
-    public ResponseEntity<Page<LoanClaim>> getLoanByCriteria(@PageableDefault(value = 50) Pageable pageable, @RequestBody LoanFilterCriteria filter) {
+    @RequestMapping(produces = "application/json", value = "/filter", method = RequestMethod.POST)
+    public ResponseEntity<Page<LoanClaim>> getLoanByCriteria(@PageableDefault(value = 50) Pageable pageable,
+                                                             @RequestBody(required = false) LoanFilterCriteria filter) {
         if (Objects.isNull(filter) || AppUtils.isNullOrWhitespace(filter.getStatus(), filter.getPersonnelId())) {
             return ResponseEntity.ok().body(loanService.findAll(pageable).map(LoanConverter::convert));
         }

@@ -21,16 +21,23 @@ import java.util.List;
 @Repository
 public interface LoanRepository extends JpaRepository<Loan, String> {
 
-    Loan findByUuidAndPersonnelId(String uuid, String personnelId);
+    @Query(value = "FROM Loan l WHERE " +
+            "LOWER(l.personnelId) = LOWER(:personnelId) AND " +
+            "LOWER(l.uuid) = LOWER(:uuid) AND " +
+            "l.productState IN :statuses")
+    Loan findByUuidAndPersonnelId(@Param("uuid") String uuid, @Param("personnelId") String personnelId,
+            @Param("statuses") List<ProductStateEnum> statuses);
 
-    @Query(value = "SELECT COUNT(l) FROM Loan l WHERE LOWER(l.country) = LOWER(:country) AND l.creationDate >= :date")
-    Long countClaimsByCountryAndCreationDate(@Param("country") String country, @Param("date") LocalDateTime date);
-
+    @Query(value = "SELECT COUNT(l) FROM Loan l WHERE LOWER(l.country) = LOWER(:country) AND l.creationDate >= :date AND " +
+            "l.productState NOT IN :statuses")
+    Long countClaimsByCountryAndCreationDate(@Param("country") String country, @Param("date") LocalDateTime date,
+                                             @Param("statuses") List<ProductStateEnum> statuses);
 
     @Query(value = "SELECT SUM(l.amount) FROM Loan l WHERE " +
             "LOWER(l.personnelId) = LOWER(:personnelId) AND " +
-            "l.productState in :statuses")
-    BigDecimal sumAmountByPersonnelIdAndStatuses(@Param("personnelId") String personnelId, @Param("statuses") List<ProductStateEnum> statuses);
+            "l.productState IN :statuses")
+    BigDecimal sumAmountByPersonnelIdAndStatuses(@Param("personnelId") String personnelId,
+                                                 @Param("statuses") List<ProductStateEnum> statuses);
 
     @Query(value = "SELECT l FROM Loan l WHERE " +
             "(:personnelId = '' or LOWER(l.personnelId) = LOWER(:personnelId)) AND " +

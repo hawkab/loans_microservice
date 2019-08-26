@@ -10,23 +10,37 @@ import java.math.BigDecimal;
 
 public class LoanClaim implements Serializable {
 
+    private String uuid;
     private BigDecimal amount;
     private Integer duration;
     private String firstName;
     private String lastName;
     private String country;
     private String personnelId;
+    private String productState;
+    private String decisionDescription;
 
     public LoanClaim() {
     }
 
-    public LoanClaim(BigDecimal amount, Integer duration, String firstName, String lastName, String country, String personnelId) {
+    public LoanClaim(String uuid, BigDecimal amount, Integer duration, String firstName, String lastName, String country, String personnelId, String productState, String decisionDescription) {
+        this.uuid = uuid;
         this.amount = amount;
         this.duration = duration;
         this.firstName = firstName;
         this.lastName = lastName;
         this.country = country;
         this.personnelId = personnelId;
+        this.productState = productState;
+        this.decisionDescription = decisionDescription;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public BigDecimal getAmount() {
@@ -61,14 +75,6 @@ public class LoanClaim implements Serializable {
         this.lastName = lastName;
     }
 
-    public String getPersonnelId() {
-        return personnelId;
-    }
-
-    public void setPersonnelId(String personnelId) {
-        this.personnelId = personnelId;
-    }
-
     public String getCountry() {
         return country;
     }
@@ -77,15 +83,42 @@ public class LoanClaim implements Serializable {
         this.country = country;
     }
 
+    public String getPersonnelId() {
+        return personnelId;
+    }
+
+    public void setPersonnelId(String personnelId) {
+        this.personnelId = personnelId;
+    }
+
+    public String getProductState() {
+        return productState;
+    }
+
+    public void setProductState(String productState) {
+        this.productState = productState;
+    }
+
+    public String getDecisionDescription() {
+        return decisionDescription;
+    }
+
+    public void setDecisionDescription(String decisionDescription) {
+        this.decisionDescription = decisionDescription;
+    }
+
     @Override
     public String toString() {
         return "LoanClaim{" +
-                "amount=" + amount +
+                "uuid='" + uuid + '\'' +
+                ", amount=" + amount +
                 ", duration=" + duration +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", country='" + country + '\'' +
                 ", personnelId='" + personnelId + '\'' +
+                ", productState='" + productState + '\'' +
+                ", decisionDescription='" + decisionDescription + '\'' +
                 '}';
     }
 }
