@@ -1,0 +1,432 @@
+{
+  "front-version": "2.20.0",
+  "version": 3,
+  "nodes": [
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "requestBody": true,
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+        "name": "POST"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "textBody": "{\n    \"amount\": 0.1, \n  \t\"duration\": 5, \n \t\"firstName\": \"Сергей\", \n  \t\"lastName\": \"Иванович\", \n  \t\"country\": \"Российская Федерация\", \n  \t\"personnelId\": \"sergey-12345\"\n}"
+      },
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:8080",
+        "path": "/loans"
+      },
+      "id": "971f11a3-5909-4a51-a215-9dce572481f2",
+      "lastModified": "2019-08-26T14:53:15.809+03:00",
+      "name": "loan_add",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Authorization",
+          "value": "Basic dXNlcjp1c2Vy"
+        },
+        {
+          "enabled": true,
+          "name": "Content-type",
+          "value": "application/json;charset=UTF-8"
+        }
+      ],
+      "metaInfo": {
+        "IS_FROM_HISTORY": "971f11a3-5909-4a51-a215-9dce572481f2"
+      }
+    },
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "requestBody": true,
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+        "name": "POST"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "textBody": "{\n    \"id\": 1, \n  \t\"firstName\": \"Сергей\", \n  \t\"lastName\": \"Иванович\", \n  \t\"country\": \"Российская Федерация\", \n  \t\"personnelId\": \"sergey-123456\"\n}"
+      },
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:8080",
+        "path": "/black-list"
+      },
+      "id": "0eed4308-4c4f-40ba-a875-d95cac7cd2a2",
+      "lastModified": "2019-08-26T14:47:11.426+03:00",
+      "name": "loan_black_list_add",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Authorization",
+          "value": "Basic dXNlcjp1c2Vy"
+        },
+        {
+          "enabled": true,
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaInfo": {
+        "IS_FROM_HISTORY": "971f11a3-5909-4a51-a215-9dce572481f2"
+      }
+    },
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "textBody": "{\n    \"id\": 1, \n  \t\"firstName\": \"Сергей\", \n  \t\"lastName\": \"Иванович\", \n  \t\"country\": \"Российская Федерация\", \n  \t\"personnelId\": \"sergey-1234\"\n}"
+      },
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": [
+            {
+              "enabled": true,
+              "name": "personnelId",
+              "value": "sergey-1234"
+            }
+          ]
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:8080",
+        "path": "/black-list"
+      },
+      "id": "0f712b8b-ccb6-402f-9a42-29f669804f37",
+      "lastModified": "2019-08-26T12:46:08.624+03:00",
+      "name": "loan_black_list_get_by_id",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Authorization",
+          "value": "Basic dXNlcjp1c2Vy"
+        }
+      ],
+      "metaInfo": {
+        "IS_FROM_HISTORY": "971f11a3-5909-4a51-a215-9dce572481f2"
+      }
+    },
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "requestBody": true,
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+        "name": "POST"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "textBody": ""
+      },
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:8080",
+        "path": "/loans/filter"
+      },
+      "id": "63d5cb8f-cac5-4a46-8367-542610bdfab7",
+      "lastModified": "2019-08-26T14:46:53.553+03:00",
+      "name": "loan_filter",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Authorization",
+          "value": "Basic dXNlcjp1c2Vy"
+        },
+        {
+          "enabled": true,
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaInfo": {
+        "IS_FROM_HISTORY": "971f11a3-5909-4a51-a215-9dce572481f2"
+      }
+    },
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "textBody": ""
+      },
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:8080",
+        "path": "/loans/e9d60576-ad44-4d28-9e56-3f964651a3e3"
+      },
+      "id": "1ed7cf59-a6e0-4916-8e6d-fa17e7f84551",
+      "lastModified": "2019-08-26T13:19:46.449+03:00",
+      "name": "loan_getByUUID",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Authorization",
+          "value": "Basic dXNlcjp1c2Vy"
+        }
+      ],
+      "metaInfo": {
+        "IS_FROM_HISTORY": "971f11a3-5909-4a51-a215-9dce572481f2"
+      }
+    },
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "requestBody": true,
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+        "name": "POST"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "textBody": "{\n    \"loanId\": \"0afbd0cb-9f45-4e49-b2a3-145d74820478\", \n  \t\"personnelId\": \"sergey-12345\"\n}"
+      },
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:8080",
+        "path": "/loans/readd"
+      },
+      "id": "956727db-5634-4ca9-85db-685164a46ce9",
+      "lastModified": "2019-08-26T15:01:08.171+03:00",
+      "name": "loan_readd",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Authorization",
+          "value": "Basic dXNlcjp1c2Vy"
+        },
+        {
+          "enabled": true,
+          "name": "Content-type",
+          "value": "application/json;charset=UTF-8"
+        }
+      ],
+      "metaInfo": {
+        "IS_FROM_HISTORY": "971f11a3-5909-4a51-a215-9dce572481f2"
+      }
+    },
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "requestBody": true,
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+        "name": "POST"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "textBody": "{\n    \"loanId\": \"eae2030f-239b-48af-aa3e-fc291f6171b6\", \n  \t\"personnelId\": \"sergey-123456\"\n}"
+      },
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:8080",
+        "path": "/loans/repay"
+      },
+      "id": "00511566-93a9-4598-8040-d5f7df88e19b",
+      "lastModified": "2019-08-26T14:43:58.035+03:00",
+      "name": "loan_repay",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Authorization",
+          "value": "Basic dXNlcjp1c2Vy"
+        },
+        {
+          "enabled": true,
+          "name": "Content-type",
+          "value": "application/json;charset=UTF-8"
+        }
+      ],
+      "metaInfo": {
+        "IS_FROM_HISTORY": "971f11a3-5909-4a51-a215-9dce572481f2"
+      }
+    },
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "requestBody": true,
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+        "name": "POST"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "textBody": "{\n    \"key\": \"tst\", \n  \t\"value\": \"TRUE\", \n \t\"description\": \"test\"\n}"
+      },
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": []
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:8080",
+        "path": "/settings"
+      },
+      "id": "c14c91d7-0bc8-4762-a35b-5765b4be55f7",
+      "lastModified": "2019-08-26T09:03:30.945+03:00",
+      "name": "loan_setting_add",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Authorization",
+          "value": "Basic dXNlcjp1c2Vy"
+        },
+        {
+          "enabled": true,
+          "name": "Content-type",
+          "value": "application/json;charset=UTF-8"
+        }
+      ],
+      "metaInfo": {
+        "IS_FROM_HISTORY": "971f11a3-5909-4a51-a215-9dce572481f2"
+      }
+    },
+    {
+      "uriEditor": true,
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "formBody": {
+          "overrideContentType": true,
+          "encoding": "application/x-www-form-urlencoded",
+          "items": []
+        },
+        "bodyType": "Text",
+        "textBody": "{\n    \"key\": \"tst\", \n  \t\"value\": \"TRUE\", \n \t\"description\": \"test\"\n}"
+      },
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": [
+            {
+              "enabled": true,
+              "name": "key",
+              "value": "tst"
+            }
+          ]
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:8080",
+        "path": "/settings"
+      },
+      "id": "32fb92f1-0dd6-4ce9-8b2c-7c02e0f72138",
+      "lastModified": "2019-08-26T09:04:33.645+03:00",
+      "name": "loan_setting_get",
+      "headers": [
+        {
+          "enabled": true,
+          "name": "Authorization",
+          "value": "Basic dXNlcjp1c2Vy"
+        }
+      ],
+      "metaInfo": {
+        "IS_FROM_HISTORY": "971f11a3-5909-4a51-a215-9dce572481f2"
+      }
+    }
+  ]
+}
