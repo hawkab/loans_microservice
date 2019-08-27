@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  * @since 26.08.2019
  */
 
-public class LoanClaim implements Serializable {
+public class LoanClaimData implements Serializable {
 
     private String uuid;
     private BigDecimal amount;
@@ -20,10 +20,10 @@ public class LoanClaim implements Serializable {
     private String productState;
     private String decisionDescription;
 
-    public LoanClaim() {
+    public LoanClaimData() {
     }
 
-    public LoanClaim(String uuid, BigDecimal amount, Integer duration, String firstName, String lastName, String country, String personnelId, String productState, String decisionDescription) {
+    public LoanClaimData(String uuid, BigDecimal amount, Integer duration, String firstName, String lastName, String country, String personnelId, String productState, String decisionDescription) {
         this.uuid = uuid;
         this.amount = amount;
         this.duration = duration;
@@ -109,7 +109,7 @@ public class LoanClaim implements Serializable {
 
     @Override
     public String toString() {
-        return "LoanClaim{" +
+        return "LoanClaimData{" +
                 "uuid='" + uuid + '\'' +
                 ", amount=" + amount +
                 ", duration=" + duration +

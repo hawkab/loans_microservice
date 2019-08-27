@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class AppUtils {
 
-    public static boolean isNullAnything(Object... args) {
+    static boolean isNullAnything(Object... args) {
         return Arrays.stream(args).anyMatch(Objects::isNull);
     }
 
@@ -24,7 +24,7 @@ public class AppUtils {
         return Arrays.stream(args).allMatch(StringUtils::isBlank);
     }
 
-    public static boolean isNullOrWhitespaceAnything(String... args) {
+    static boolean isNullOrWhitespaceAnything(String... args) {
         return Arrays.stream(args).anyMatch(StringUtils::isBlank);
     }
 }

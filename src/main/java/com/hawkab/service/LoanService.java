@@ -1,9 +1,9 @@
 package com.hawkab.service;
 
-import com.hawkab.entity.Loan;
-import com.hawkab.entity.enums.ProductStateEnum;
+import com.hawkab.entity.LoanEntity;
+import com.hawkab.entity.enums.LoanStatusEnum;
 import com.hawkab.repository.LoanRepository;
-import com.hawkab.rest.LoanFilterCriteria;
+import com.hawkab.rest.LoanFilterRq;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author hawkab
@@ -22,8 +25,8 @@ import java.util.*;
 
 @Service
 public class LoanService {
-    private static final List<ProductStateEnum> confirmedStatuses = Collections.singletonList(ProductStateEnum.CONFIRMED);
-    private static final List<ProductStateEnum> rejectedStatuses = Collections.singletonList(ProductStateEnum.REJECTED);
+    private static final List<LoanStatusEnum> confirmedStatuses = Collections.singletonList(LoanStatusEnum.CONFIRMED);
+    private static final List<LoanStatusEnum> rejectedStatuses = Collections.singletonList(LoanStatusEnum.REJECTED);
 
     private final LoanRepository loanRepository;
 
@@ -32,35 +35,35 @@ public class LoanService {
         this.loanRepository = loanRepository;
     }
 
-    public Loan findOne(String uuid) {
+    public LoanEntity findOne(String uuid) {
         return loanRepository.findOne(uuid);
     }
 
-    public Page<Loan> findAll(Pageable pageable){
+    public Page<LoanEntity> findAll(Pageable pageable) {
         return loanRepository.findAll(pageable);
     }
 
-    public Page<Loan> findAllByCriteria(LoanFilterCriteria filter, Pageable pageable){
+    public Page<LoanEntity> findAllByCriteria(LoanFilterRq filter, Pageable pageable) {
         return loanRepository.findAll(StringUtils.isBlank(filter.getPersonnelId()) ?
                 StringUtils.EMPTY : filter.getPersonnelId(),
                 StringUtils.isBlank(filter.getStatus()) ? StringUtils.EMPTY : filter.getStatus(), pageable);
     }
 
-    public Loan getLoanByUuidAndPersonnelId(String uuid, String personnelId) {
+    public LoanEntity getLoanByUuidAndPersonnelId(String uuid, String personnelId) {
         return loanRepository.findByUuidAndPersonnelId(uuid, personnelId, rejectedStatuses);
     }
 
-    public Loan repayLoan(String uuid, String personnelId) {
-        Loan loan = getLoanByUuidAndPersonnelId(uuid, personnelId);
-        if (Objects.nonNull(loan)) {
-            loan.setProductState(ProductStateEnum.PAYED);
-            return loanRepository.save(loan);
+    public LoanEntity repayLoan(String uuid, String personnelId) {
+        LoanEntity loanEntity = getLoanByUuidAndPersonnelId(uuid, personnelId);
+        if (Objects.nonNull(loanEntity)) {
+            loanEntity.setProductState(LoanStatusEnum.PAYED);
+            return loanRepository.save(loanEntity);
         }
         throw new EntityNotFoundException();
     }
 
-    Loan save(Loan loan) {
-        return loanRepository.save(loan);
+    LoanEntity save(LoanEntity loanEntity) {
+        return loanRepository.save(loanEntity);
     }
 
     BigDecimal sumAmountByPersonnelIdAndStatuses(String personnelId) {

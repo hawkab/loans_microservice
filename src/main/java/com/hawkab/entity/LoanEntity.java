@@ -1,6 +1,6 @@
 package com.hawkab.entity;
 
-import com.hawkab.entity.enums.ProductStateEnum;
+import com.hawkab.entity.enums.LoanStatusEnum;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "loans")
-public class Loan {
+public class LoanEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -30,7 +30,7 @@ public class Loan {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "product_state")
-    private ProductStateEnum productState;
+    private LoanStatusEnum productState;
 
     @Column(name = "decision_description")
     private String decisionDescription;
@@ -82,11 +82,11 @@ public class Loan {
         this.duration = duration;
     }
 
-    public ProductStateEnum getProductState() {
+    public LoanStatusEnum getProductState() {
         return productState;
     }
 
-    public void setProductState(ProductStateEnum productState) {
+    public void setProductState(LoanStatusEnum productState) {
         this.productState = productState;
     }
 

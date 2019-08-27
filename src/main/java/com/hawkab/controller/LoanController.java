@@ -1,16 +1,16 @@
 package com.hawkab.controller;
 
 import com.hawkab.converter.LoanConverter;
-import com.hawkab.entity.Loan;
-import com.hawkab.entity.enums.ProductStateEnum;
-import com.hawkab.rest.LoanClaim;
-import com.hawkab.rest.LoanClaimInfo;
-import com.hawkab.rest.LoanClaimResult;
-import com.hawkab.rest.LoanFilterCriteria;
+import com.hawkab.entity.LoanEntity;
+import com.hawkab.entity.enums.LoanStatusEnum;
+import com.hawkab.rest.LoanClaimData;
+import com.hawkab.rest.LoanClaimRq;
+import com.hawkab.rest.LoanClaimShortResult;
+import com.hawkab.rest.LoanFilterRq;
 import com.hawkab.service.LoanDecisionService;
 import com.hawkab.service.LoanService;
-import com.hawkab.utils.LoanValidator;
 import com.hawkab.utils.AppUtils;
+import com.hawkab.utils.LoanValidator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
@@ -49,34 +49,34 @@ public class LoanController {
     }
 
     @RequestMapping(consumes = "application/json", produces = "application/json", method = RequestMethod.POST)
-    public ResponseEntity<LoanClaimResult> addLoan(@RequestBody LoanClaim loanClaim) {
-        Loan converted = LoanConverter.convert(loanClaim);
+    public ResponseEntity<LoanClaimShortResult> addLoan(@RequestBody LoanClaimData loanClaimData) {
+        LoanEntity converted = LoanConverter.convert(loanClaimData);
         try {
             LoanValidator.validate(converted);
         } catch (ValidationException ex) {
             LOGGER.warn(ex);
-            return ResponseEntity.badRequest().body(new LoanClaimResult(null, ex.getMessage()));
+            return ResponseEntity.badRequest().body(new LoanClaimShortResult(null, ex.getMessage()));
         }
 
-        Loan loan = loanDecisionService.getLoanDecision(converted);
-            return ResponseEntity.ok().body(new LoanClaimResult(loan.getUuid(),
-                    String.format("%s - %s", loan.getProductState().name(), loan.getDecisionDescription())));
+        LoanEntity loanEntity = loanDecisionService.getLoanDecision(converted);
+        return ResponseEntity.ok().body(new LoanClaimShortResult(loanEntity.getUuid(),
+                String.format("%s - %s", loanEntity.getProductState().name(), loanEntity.getDecisionDescription())));
     }
 
     @RequestMapping(produces = "text/plain;charset=UTF-8", value = "/repay", method = RequestMethod.POST)
-    public ResponseEntity<String> repayLoan(@RequestBody LoanClaimInfo loanClaimInfo) {
-        if (AppUtils.isNotNullOrWhitespace(loanClaimInfo.getLoanId(), loanClaimInfo.getPersonnelId())) {
-            Loan loan;
+    public ResponseEntity<String> repayLoan(@RequestBody LoanClaimRq loanClaimRq) {
+        if (AppUtils.isNotNullOrWhitespace(loanClaimRq.getLoanId(), loanClaimRq.getPersonnelId())) {
+            LoanEntity loanEntity;
             try {
-                loan = loanService.repayLoan(loanClaimInfo.getLoanId(), loanClaimInfo.getPersonnelId());
+                loanEntity = loanService.repayLoan(loanClaimRq.getLoanId(), loanClaimRq.getPersonnelId());
             } catch (EntityNotFoundException ex) {
                 LOGGER.warn(ex);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Подтверждённый кредит с такими данными не найден");
             }
-            if (Objects.nonNull(loan) && ProductStateEnum.PAYED.equals(loan.getProductState())) {
+            if (Objects.nonNull(loanEntity) && LoanStatusEnum.PAYED.equals(loanEntity.getProductState())) {
                 return ResponseEntity.ok("Кредит успешно погашен");
             } else {
-                String errorMessage = String.format("Произошла ошибка при погашении кредита %s", loanClaimInfo.getLoanId());
+                String errorMessage = String.format("Произошла ошибка при погашении кредита %s", loanClaimRq.getLoanId());
                 LOGGER.error(errorMessage);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
             }
@@ -85,24 +85,24 @@ public class LoanController {
     }
 
     @RequestMapping(produces = "application/json", consumes = "application/json", value = "/readd", method = RequestMethod.POST)
-    public ResponseEntity<LoanClaimResult> reAddLoan(@RequestBody LoanClaimInfo loanClaimInfo) {
-        if (AppUtils.isNotNullOrWhitespace(loanClaimInfo.getLoanId(), loanClaimInfo.getPersonnelId())) {
-            Loan loan = loanService.getLoanByUuidAndPersonnelId(loanClaimInfo.getLoanId(), loanClaimInfo.getPersonnelId());
-            if (Objects.isNull(loan)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LoanClaimResult(null,
+    public ResponseEntity<LoanClaimShortResult> reAddLoan(@RequestBody LoanClaimRq loanClaimRq) {
+        if (AppUtils.isNotNullOrWhitespace(loanClaimRq.getLoanId(), loanClaimRq.getPersonnelId())) {
+            LoanEntity loanEntity = loanService.getLoanByUuidAndPersonnelId(loanClaimRq.getLoanId(), loanClaimRq.getPersonnelId());
+            if (Objects.isNull(loanEntity)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LoanClaimShortResult(null,
                         "По заданным параметрам отказанный кредит не найден"));
             }
             try {
-                LoanValidator.validate(loan);
+                LoanValidator.validate(loanEntity);
             } catch (ValidationException ex) {
                 LOGGER.warn(ex);
-                return ResponseEntity.badRequest().body(new LoanClaimResult(null, ex.getMessage()));
+                return ResponseEntity.badRequest().body(new LoanClaimShortResult(null, ex.getMessage()));
             }
-            loanDecisionService.getLoanDecision(loan);
-            return ResponseEntity.ok().body(new LoanClaimResult(loan.getUuid(),
-                    String.format("%s - %s", loan.getProductState().name(), loan.getDecisionDescription())));
+            loanDecisionService.getLoanDecision(loanEntity);
+            return ResponseEntity.ok().body(new LoanClaimShortResult(loanEntity.getUuid(),
+                    String.format("%s - %s", loanEntity.getProductState().name(), loanEntity.getDecisionDescription())));
         }
-        return ResponseEntity.badRequest().body(new LoanClaimResult(null,
+        return ResponseEntity.badRequest().body(new LoanClaimShortResult(null,
                 "Не заполнено одно из обязательных полей: loanId или personnelId"));
     }
 
@@ -111,16 +111,16 @@ public class LoanController {
         if (StringUtils.isBlank(uuid)) {
             return ResponseEntity.badRequest().body("Не заполнено обязательное поле: uuid");
         }
-        Loan loan = loanService.findOne(uuid);
-        if (Objects.isNull(loan)) {
+        LoanEntity loanEntity = loanService.findOne(uuid);
+        if (Objects.isNull(loanEntity)) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(LoanConverter.convert(loan));
+        return ResponseEntity.ok().body(LoanConverter.convert(loanEntity));
     }
 
     @RequestMapping(produces = "application/json", value = "/filter", method = RequestMethod.POST)
-    public ResponseEntity<Page<LoanClaim>> getLoanByCriteria(@PageableDefault(value = 50) Pageable pageable,
-                                                             @RequestBody(required = false) LoanFilterCriteria filter) {
+    public ResponseEntity<Page<LoanClaimData>> getLoanByCriteria(@PageableDefault(value = 50) Pageable pageable,
+                                                                 @RequestBody(required = false) LoanFilterRq filter) {
         if (Objects.isNull(filter) || AppUtils.isNullOrWhitespace(filter.getStatus(), filter.getPersonnelId())) {
             return ResponseEntity.ok().body(loanService.findAll(pageable).map(LoanConverter::convert));
         }

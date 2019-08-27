@@ -1,7 +1,7 @@
 package com.hawkab.converter;
 
-import com.hawkab.entity.Loan;
-import com.hawkab.rest.LoanClaim;
+import com.hawkab.entity.LoanEntity;
+import com.hawkab.rest.LoanClaimData;
 import org.springframework.beans.BeanUtils;
 
 /**
@@ -10,14 +10,14 @@ import org.springframework.beans.BeanUtils;
  */
 
 public class LoanConverter {
-    public static Loan convert(LoanClaim claim) {
-        Loan loan = new Loan();
-        BeanUtils.copyProperties(claim, loan);
-        return loan;
+    public static LoanEntity convert(LoanClaimData claim) {
+        LoanEntity loanEntity = new LoanEntity();
+        BeanUtils.copyProperties(claim, loanEntity);
+        return loanEntity;
     }
 
-    public static LoanClaim convert(Loan entity) {
-        LoanClaim claim = new LoanClaim();
+    public static LoanClaimData convert(LoanEntity entity) {
+        LoanClaimData claim = new LoanClaimData();
         BeanUtils.copyProperties(entity, claim);
         claim.setProductState(entity.getProductState().name());
         return claim;

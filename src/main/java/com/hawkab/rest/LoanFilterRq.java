@@ -8,15 +8,15 @@ import java.io.Serializable;
  * @since 26.08.2019
  */
 
-public class LoanFilterCriteria implements Serializable {
+public class LoanFilterRq implements Serializable {
 
     private String status;
     private String personnelId;
 
-    public LoanFilterCriteria() {
+    public LoanFilterRq() {
     }
 
-    public LoanFilterCriteria(String status, String personnelId) {
+    public LoanFilterRq(String status, String personnelId) {
         this.status = status;
         this.personnelId = personnelId;
     }
@@ -39,7 +39,7 @@ public class LoanFilterCriteria implements Serializable {
 
     @Override
     public String toString() {
-        return "LoanFilterCriteria{" +
+        return "LoanFilterRq{" +
                 "status='" + status + '\'' +
                 ", personnelId='" + personnelId + '\'' +
                 '}';
