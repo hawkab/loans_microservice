@@ -4,10 +4,10 @@ import com.hawkab.converter.SettingConverter;
 import com.hawkab.entity.SettingEntity;
 import com.hawkab.rest.SettingData;
 import com.hawkab.service.SettingService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
 import java.util.Objects;
 
 /**
@@ -21,7 +21,7 @@ public class SettingController {
 
     private SettingService settingService;
 
-    @Inject
+    @Autowired
     public void setSettingService(SettingService settingService) {
         this.settingService = settingService;
     }

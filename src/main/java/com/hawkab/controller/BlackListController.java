@@ -4,13 +4,13 @@ import com.hawkab.converter.BlackListConverter;
 import com.hawkab.entity.BlackListEntity;
 import com.hawkab.rest.BlackListData;
 import com.hawkab.service.BlackListService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
 import java.util.Objects;
 
 /**
@@ -23,7 +23,7 @@ public class BlackListController {
 
     private BlackListService blackListService;
 
-    @Inject
+    @Autowired
     public void setBlackListService(BlackListService blackListService) {
         this.blackListService = blackListService;
     }

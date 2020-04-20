@@ -13,6 +13,7 @@ import com.hawkab.utils.AppUtils;
 import com.hawkab.utils.LoanValidator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,9 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
-import javax.xml.bind.ValidationException;
+import javax.validation.ValidationException;
 import java.util.Objects;
 
 /**
@@ -38,12 +38,12 @@ public class LoanController {
     private LoanService loanService;
     private LoanDecisionService loanDecisionService;
 
-    @Inject
+    @Autowired
     public void setLoanService(LoanService loanService) {
         this.loanService = loanService;
     }
 
-    @Inject
+    @Autowired
     public void setLoanDecisionService(LoanDecisionService loanDecisionService) {
         this.loanDecisionService = loanDecisionService;
     }
