@@ -12,9 +12,20 @@ import javax.persistence.*;
 @Table(name = "settings")
 public class SettingEntity {
 
+    /**
+     * Кодовый идентификатор настройки
+     */
     @Id
     private String key;
+
+    /**
+     * Значение настройки
+     */
     private String value;
+
+    /**
+     * Описание настройки
+     */
     private String description;
 
     public SettingEntity() {

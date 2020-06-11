@@ -9,22 +9,17 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import static com.hawkab.utils.Constants.*;
+
 /**
+ * Сервис работы с сущностью настроек системы
+ *
  * @author hawkab
  * @since 26.08.2019
  */
 
 @Service
 public class SettingService {
-
-    private static final String LIMIT_COUNT_CLAIMS = "limit_count_claims";
-    private static final String DEFAULT_LIMIT_COUNT_CLAIMS = "5";
-
-    private static final String LIMIT_MINUTES_CLAIMS = "limit_minutes_claims";
-    private static final String DEFAULT_LIMIT_MINUTES_CLAIMS = "1";
-
-    private static final String LIMIT_AMOUNT_CLAIMS = "limit_amount_claims";
-    private static final String DEFAULT_LIMIT_AMOUNT_CLAIMS = "1000.00";
 
     private final SettingsRepository settingsRepository;
 
@@ -33,6 +28,11 @@ public class SettingService {
         this.settingsRepository = settingsRepository;
     }
 
+    /**
+     * Применить настройку
+     *
+     * @param frontEntity объект настройки
+     */
     public void setSetting(SettingEntity frontEntity) {
         SettingEntity existsSetting = getSetting(frontEntity.getKey());
         if (Objects.isNull(existsSetting)) {
@@ -45,20 +45,41 @@ public class SettingService {
         }
     }
 
+    /**
+     * Получить сущность настройки по коду
+     *
+     * @param key код настройки (идентификатор)
+     * @return объект настройки
+     */
     public SettingEntity getSetting(String key) {
         return settingsRepository.findByKey(key);
     }
 
+    /**
+     * Получить максимальное количество заявок
+     *
+     * @return целое положительное число заявок
+     */
     long getLimitCountClaims(){
         String value = getValueByKeyOrDefault(LIMIT_COUNT_CLAIMS, DEFAULT_LIMIT_COUNT_CLAIMS);
         return Long.parseLong(value);
     }
 
+    /**
+     * Получить настроечное количество минут для агрегации количества заявок
+     *
+     * @return целое положительное число минут
+     */
     long getLimitMinutes(){
         String value = getValueByKeyOrDefault(LIMIT_MINUTES_CLAIMS, DEFAULT_LIMIT_MINUTES_CLAIMS);
         return Long.parseLong(value);
     }
 
+    /**
+     * Получить максимально допустимую сумму неоплаченных кредитов по гражданину
+     *
+     * @return дробное число
+     */
     BigDecimal getLimitAmount(){
         String value = getValueByKeyOrDefault(LIMIT_AMOUNT_CLAIMS, DEFAULT_LIMIT_AMOUNT_CLAIMS);
         return BigDecimal.valueOf(Double.parseDouble(value));

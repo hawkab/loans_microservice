@@ -8,6 +8,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
+ * Кредит
+ *
  * @author hawkab
  * @since 26.08.2019
  */
@@ -16,6 +18,9 @@ import java.time.LocalDateTime;
 @Table(name = "loans")
 public class LoanEntity {
 
+    /**
+     * Уникальный автогенерируемый идентификатор кредита
+     */
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -25,21 +30,53 @@ public class LoanEntity {
     @Column(name = "uuid", nullable = false, updatable = false)
     private String uuid;
 
+    /**
+     * Дата создания записи
+     */
     @Column(name = "creation_date")
     private LocalDateTime creationDate = LocalDateTime.now();
 
+    /**
+     * Статус кредита
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "product_state")
     private LoanStatusEnum productState;
 
+    /**
+     * Расшифровка решения по кредиту
+     */
     @Column(name = "decision_description")
     private String decisionDescription;
 
+    /**
+     * Неоплаченная сумма по кредиту
+     */
     private BigDecimal amount;
+
+    /**
+     * Срок кредита
+     */
     private Integer duration;
+
+    /**
+     * Имя кредитора
+     */
     private String firstName;
+
+    /**
+     * Фамилия кредитора
+     */
     private String lastName;
+
+    /**
+     * Страна в которой осуществляется продажа кредита
+     */
     private String country;
+
+    /**
+     * Идентификатор гражданина
+     */
     private String personnelId;
 
     public String getFirstName() {

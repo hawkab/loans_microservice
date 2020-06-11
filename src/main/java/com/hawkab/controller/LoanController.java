@@ -25,6 +25,8 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 import java.util.Objects;
 
+import static com.hawkab.utils.Constants.*;
+
 /**
  * @author hawkab
  * @since 26.08.2019
@@ -71,17 +73,17 @@ public class LoanController {
                 loanEntity = loanService.repayLoan(loanClaimRq.getLoanId(), loanClaimRq.getPersonnelId());
             } catch (EntityNotFoundException ex) {
                 LOGGER.warn(ex);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Подтверждённый кредит с такими данными не найден");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(LOAN_NOT_FOUND_MESSAGE);
             }
             if (Objects.nonNull(loanEntity) && LoanStatusEnum.PAYED.equals(loanEntity.getProductState())) {
-                return ResponseEntity.ok("Кредит успешно погашен");
+                return ResponseEntity.ok(LOAN_SUCCESSFULLY_REPAYED_MESSAGE);
             } else {
-                String errorMessage = String.format("Произошла ошибка при погашении кредита %s", loanClaimRq.getLoanId());
+                String errorMessage = String.format(REPAY_LOAN_ERROR_MESSAGE, loanClaimRq.getLoanId());
                 LOGGER.error(errorMessage);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
             }
         }
-        return ResponseEntity.badRequest().body("Не заполнено одно из обязательных полей: loanId или personnelId");
+        return ResponseEntity.badRequest().body(REPAY_REQUIRED_FIELD_MESSAGE);
     }
 
     @RequestMapping(produces = "application/json", consumes = "application/json", value = "/readd", method = RequestMethod.POST)
@@ -90,7 +92,7 @@ public class LoanController {
             LoanEntity loanEntity = loanService.getLoanByUuidAndPersonnelId(loanClaimRq.getLoanId(), loanClaimRq.getPersonnelId());
             if (Objects.isNull(loanEntity)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LoanClaimShortResult(null,
-                        "По заданным параметрам отказанный кредит не найден"));
+                        READD_LOAN_NOT_FOUND_MESSAGE));
             }
             try {
                 LoanValidator.validate(loanEntity);
@@ -103,13 +105,13 @@ public class LoanController {
                     String.format("%s - %s", loanEntity.getProductState().name(), loanEntity.getDecisionDescription())));
         }
         return ResponseEntity.badRequest().body(new LoanClaimShortResult(null,
-                "Не заполнено одно из обязательных полей: loanId или personnelId"));
+                LOAN_READD_REQUIRED_FIELD_MESSAGE));
     }
 
     @RequestMapping(produces = "application/json;charset=UTF-8", value = "/{uuid}", method = RequestMethod.GET)
     public ResponseEntity<?> getLoanByUuid(@PathVariable String uuid) {
         if (StringUtils.isBlank(uuid)) {
-            return ResponseEntity.badRequest().body("Не заполнено обязательное поле: uuid");
+            return ResponseEntity.badRequest().body(FIND_UUID_LOAN_REQUIRED_FIELD_MESSAGE);
         }
         LoanEntity loanEntity = loanService.findOne(uuid);
         if (Objects.isNull(loanEntity)) {

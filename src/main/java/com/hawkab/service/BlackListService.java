@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 /**
+ * Сервис, осуществляющий работу со справочником "чёрный список"
+ *
  * @author hawkab
  * @since 26.08.2019
  */
@@ -25,6 +27,11 @@ public class BlackListService {
         this.blackListRepository = blackListRepository;
     }
 
+    /**
+     * Добавить новый элемент в справочник
+     *
+     * @param blackListEntity элемент справочника "чёрный список"
+     */
     public void addPerson(BlackListEntity blackListEntity) {
         BlackListEntity existsEntity = getPerson(blackListEntity.getId());
         if (Objects.isNull(existsEntity)) {
@@ -35,14 +42,32 @@ public class BlackListService {
         }
     }
 
+    /**
+     * Получить элемент по идентификатору гражданина из справочника
+     *
+     * @param personnelId идентификатор гражданина
+     * @return элемент справочника "чёрный список"
+     */
     public BlackListEntity getPerson(String personnelId) {
         return blackListRepository.findByPersonnelId(personnelId);
     }
 
+    /**
+     * Получить элемент по идентификатору из справочника
+     *
+     * @param id идентификатор элемента из справочника "чёрный список"
+     * @return элемент справочника "чёрный список"
+     */
     private BlackListEntity getPerson(Long id) {
         return blackListRepository.findOne(id);
     }
 
+    /**
+     * Получить страницу справочника "Чёрный список" по заданным условиям номера и размера страницы, сортировки
+     *
+     * @param pageable Объект настроек постраничного вывода
+     * @return страница элементов справочника "чёрный список"
+     */
     public Page<BlackListEntity> getPersons(Pageable pageable) {
         return blackListRepository.findAll(pageable);
     }

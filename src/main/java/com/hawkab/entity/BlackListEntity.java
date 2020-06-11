@@ -4,6 +4,7 @@ package com.hawkab.entity;
 import javax.persistence.*;
 
 /**
+ * Справочник "чёрный список"
  * @author hawkab
  * @since 26.08.2019
  */
@@ -12,13 +13,31 @@ import javax.persistence.*;
 @Table(name = "black_list")
 public class BlackListEntity {
 
+    /**
+     * Идентификатор записи справочника
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Имя кредитора
+     */
     private String firstName;
+
+    /**
+     * Фамилия кредитора
+     */
     private String lastName;
+
+    /**
+     * Страна, в которой осуществляется продажа кредита
+     */
     private String country;
+
+    /**
+     * Идентификатор гражданина
+     */
     private String personnelId;
 
     public Long getId() {
